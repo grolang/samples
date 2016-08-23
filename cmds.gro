@@ -1,0 +1,5 @@
+包正
+源"cmds.go"
+功正(){
+  跑"src/github.com/grolang/samples/goByEg1.gro" //BUG
+}

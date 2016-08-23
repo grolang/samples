@@ -1,0 +1,28 @@
+package main
+源"sampler.go"
+入"fmt"
+import 吧"fmt" //we can use any Kanji with 口-radical on LHS...
+import 哪_fg"fmt" //...with imports that don't have their own dedicated Kanji
+入㕤hij"fmt"
+入卟"unicode/utf8"
+入吗嗎kl"unicode/utf8" //can even put in two aliases
+
+type A int
+变n = 50
+功正(){
+  var b A
+  var c这A //can use `这` with locally-defined type to achieve spaceless program
+  形Println(b, c)
+
+  如假{
+    fg.Printf("Len: %d\n", 度("hijk") + n)
+  }否{
+    hij.Printf("Len: %d\n", 度("hi") + n)
+  }
+  fr,_:= utf8.DecodeRune([]节("lmnop"))
+  fmt.Printf("1st rune: %s; Len: %d\n", 串(fr), 度("lmnop") + n)
+  让_,_=吗DecodeRune([]节("lmnop"))
+  㕤Printf("Fifty: %d\n", n)
+  哪Printf("Fifty: %d\n", n)
+  吧Printf("Fifty: %d\n", n)
+}

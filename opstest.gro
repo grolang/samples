@@ -1,0 +1,234 @@
+用㗢"github.com/grolang/dyn/macro"
+源"opstest.go"
+入(u8"github.com/grolang/dyn/utf88"
+     "github.com/grolang/dyn/ops")
+功正(){
+
+ 对真
+ 㗢{
+
+//bool...
+  对 真
+  对 真 == 真
+  对 假 == 假
+  对 (真)
+  对 (假) == 假
+  对 ((真))
+  对 ((假)) == 假
+
+  对 !假
+  对 ((!假))
+  对 !(假)
+  对 !((假))
+  对 (!(假))
+  对 !!假 == 假
+
+  对 ( 假&&假 )== 假
+  对 ( 真&&(假) )== 假
+  对 ( 假&&真 )== 假
+  对 真 && 真
+
+  对 真||真
+  对 假||(真)
+  对 真||假
+  对 ( 假||假)== 假
+
+  对 真
+
+
+//more bool...
+  对 11+3 <= 34 && 真;
+  对 !(  5>7 && 6>8 );
+  对 !(  9>7 && 6>8 );
+  对 !(  6>8 && 9>7 ); //  
+  对 9>7 && 8>3 ; 
+
+//  对 !(  11+3 <= 4 || 假 );
+  对 !( 5>7 || 6>8 );
+  对 9>7 || 6>8 ; 
+  对 6>8 || 9>7 ; 
+  对 9>7 || 8>3 ; 
+
+
+  对( ! 假 )
+        对( 真  )
+
+  //and
+  对 真 && 真
+  对 真 && !假
+  对 !假 && 真
+  对 !假 && !假
+  对 !假 && 真 && !假
+  对 (7 && 9) == 9
+
+  //or
+  对 真 || 假
+  对 假 || 真
+  对 真 || 真
+  对 !( 假 || 假 )
+
+
+//--------------------------------------------------------------------------------
+//Unary...
+  对 -(7) == -7
+  对 +(5/2) == 5/2 //RUNTIME ERROR: comparing BigRat (incomparable number)
+
+  对 (+ 123)==123 //对 ERROR: 对ion is false
+  对 848 == 848
+  对  7 == 7;
+  对  +123 == 123
+  对  -78 == -78
+  对 - 79 == -79
+  对  - 6 == -6
+
+  对 - - 6 == 6 //double negative
+
+//Multiplicative...
+
+  对 3 * 4 == 12
+  对 -9  * 5 / 10 == -9/2 //i.e. (-9) * 5 / 10)
+  对  3 * 5 * 4 == 60 
+
+  对  3 * 5 /4 == 15/4 
+  对 -9  * 5 / 10 * 2 == -9
+
+  对 7.5 != 16/ 2
+  对 7.5 == 15/ 2
+
+    对 (7 + ( 8 * (9 - 2*3)) +  2 -1 * 7 ==26);
+   对( 7 + ( 8 * 3) +  2 - - -1 * 7 == 26 )       //
+    对( -12/5 == 3 * - 4 /5 );
+
+//Additive...
+  对 3 + 4 == 7
+
+  对  5 + 3 == 8 
+  对   99 + -9 - 5 + - 45 == 40
+  对   99 + -9 - (5 + - 45) == 130
+
+  对 7.5 + 24 == 31.5
+  对 7 + 24 +2 - 7 == 26
+  对 (24- 12 ) ==12
+  对 7 + (24- 12 ) - 7 == 12
+
+  对 -9  * 5 / (10 * 2) == -9/4
+  对  5 + 7 * 2 == 19
+  对  5 + 3 + 7 * 2 == 22
+  对  5 + 7 * 2 * 9==131
+  对  5 + 7 * -2 * 9== -121
+  对  5 + 7 * 2 + 2== 21
+  对  3 * 5 * 4 + 2== 62
+  对  3 * 5 + 7 == 22
+
+  对 3 * - 4 * 5 == -60
+  对 3 * - 4 /5 == -12/5
+
+
+  对 7 + ( 8 * (9 - 2*3)) +  2 -1 * 7 == 26
+
+  对 7 + ( 8 * 3) +  2 - - -1 * 7  == 26 //negs must be separated by spaces or they'll be autodecr op
+
+//Inequalities...
+  对 7>=2; 
+  对 7>2; 
+
+  对 !(  14 <= 12 ) ;
+  对 !(  14 < 12  ) ;
+  对 ! ! (7+2 > 5)  ;
+
+  对 !(3 < - 4 /5)
+  对 -3 >= -5 
+
+//Equalities...
+  对 7 == 7
+  对 7 == 2+5
+  对  10!= 11; 
+  对 !( 10!= 10 ); 
+  对 !(3 == 5)
+
+//--------------------------------------------------------------------------------
+//Runex
+  对'a' == u8.Codepoint(97)
+  对 '\\' == u8.Codepoint(92)
+  对 ']' == u8.Codepoint(93)
+
+  对 '2a-b' == ops.CharClass(u8.Surr("[2a-b]"))
+  对 '2a-c-' == ops.CharClass(u8.Surr(`[2a-c-]`))
+  对 '^2a-c' == ops.CharClass(u8.Surr("[^2a-c]")) //TODO: remove this ^ notation from runex
+
+//Negate
+  对-'ab' == ops.CharClass(u8.Surr("[^ab]"))
+  对 -'2a-c' == ops.CharClass(u8.Surr("[^2a-c]"))
+
+//--------------------------------------------------------------------------------
+//Alt
+
+//Codepoint...
+  对 'a' | 'b' ==ops.CharClass(u8.Surr("[ab]"))     //point + point
+  对 'a' | 'g-j' == ops.CharClass(u8.Surr("[ag-j]"))   //point + class
+  对 'a' | '^g-j' == ops.Regex(u8.Surr("a|[^g-j]"))  //point + negclass
+
+  对 'a' | `fg` == ops.Regex(u8.Surr(`a|(?:\Qfg\E)`))     //point + text
+  对 'a' | ops.Regex(u8.Surr("fg+")) == ops.Regex(u8.Surr("a|(?:fg+)"))  //point + regexp
+
+//Text...
+  对 "ab"  | 'g'   == ops.Regex(u8.Surr(`(?:\Qab\E)|g`))    //text + point
+  对 "abc" | 'g-j' == ops.Regex(u8.Surr(`(?:\Qabc\E)|[g-j]`)) //text + class
+  对 "abc" | "fgh" == ops.Regex(u8.Surr(`(?:\Qabc\E)|(?:\Qfgh\E)`)) //text + text
+  对 "abc" | ops.Regex(u8.Surr("f|g")) == ops.Regex(u8.Surr(`(?:\Qabc\E)|(?:f|g)`)) //text + regexp
+  对 "abc" | 'fg' == ops.Regex(u8.Surr(`(?:\Qabc\E)|[fg]`))
+  对 "abc" | 'f' | 'g' == ops.Regex(u8.Surr(`(?:(?:\Qabc\E)|f)|g`))
+
+//CharClass...
+  对 'a-e'  | 'g'      == 'a-eg'  //class + point
+  对 -'a-e' | 'g'      == ops.Regex(u8.Surr("[^a-e]|g"))  //negclass + point
+  对 'a-e'  | 'g-j'    == ops.CharClass(u8.Surr("[a-eg-j]"))  //class + class
+  对 -'a-e' | -'g-j'   == ops.CharClass(u8.Surr(`[^a-eg-j]`))  //negclass + negclass
+  对 -'a-e' | 'g-j'    == ops.Regex(u8.Surr(`[^a-e]|[g-j]`))  //negclass + class
+  对 'a-e'  | -'g-j'   == ops.Regex(u8.Surr(`[a-e]|[^g-j]`))  //class + negclass
+
+  对 'a-e' | "fgh" == ops.Regex(u8.Surr(`[a-e]|(?:\Qfgh\E)`)) //class + text
+  对 'a-e' | ops.Regex(u8.Surr("fg*")) == ops.Regex(u8.Surr("[a-e]|(?:fg*)")) //class + regexp
+
+//Regex...
+  对 ops.Regex(u8.Surr("f|g")) | 'a'    == ops.Regex(u8.Surr("(?:f|g)|a"))    //regexp + point
+  对 ops.Regex(u8.Surr("f|g")) | 'a-e'  == ops.Regex(u8.Surr("(?:f|g)|[a-e]")) //regexp + class
+  对 ops.Regex(u8.Surr("f|g")) | "abc"  == ops.Regex(u8.Surr(`(?:f|g)|(?:\Qabc\E)`)) //regexp + text
+  对 ops.Regex(u8.Surr("f|g")) | ops.Regex(u8.Surr("J|k")) == ops.Regex(u8.Surr("(?:f|g)|(?:J|k)")) //regexp + regexp
+
+//--------------------------------------------------------------------------------
+//Seq
+
+//Codepoint...
+  对 'a' + 'b' == "ab"      //point + point
+  对 'a' & 'b' == "ab"
+  对 'a' & 'g-j' == ops.Regex(u8.Surr("a[g-j]"))  //point + class
+  对 'a' + "fg"  == "afg"   //point + text
+  对 'a' & "fg"  == "afg"
+  对 'a' & ops.Regex(u8.Surr("f|g")) == ops.Regex(u8.Surr("a(?:f|g)"))  //point + regexp
+
+//CharClass...
+  对 'a-e' & 'g' == ops.Regex(u8.Surr("[a-e]g")) //class + point
+  对 'a-e' & 'g-j' == ops.Regex(u8.Surr("[a-e][g-j]")) //class + class
+  对 'a-e' & "fgh" == ops.Regex(u8.Surr("[a-e]fgh")) //class + text
+  对 'a-e' & ops.Regex(u8.Surr("f|g")) == ops.Regex(u8.Surr("[a-e](?:f|g)")) //class + regexp
+
+//Text...
+  对 "ab" + 'g' == "abg" //text + point
+  对 "ab" & 'g' == "abg"
+  对 "abc" & 'g-j' == ops.Regex(u8.Surr("abc[g-j]")) //text + class
+  对 "abc" + "fgh" == "abcfgh" // text + text
+  对 "abc" & "fgh" == "abcfgh"
+  对 "abc" & ops.Regex(u8.Surr("f|g")) == ops.Regex(u8.Surr("abc(?:f|g)")) //text + regexp
+
+//Regex...
+  对 ops.Regex(u8.Surr("f|g")) & 'a' == ops.Regex(u8.Surr("(?:f|g)a"))  //regexp + point
+  对 ops.Regex(u8.Surr("f|g")) & 'a-e' == ops.Regex(u8.Surr("(?:f|g)[a-e]"))  //regexp + class
+  对 ops.Regex(u8.Surr("f|g")) & "abc" == ops.Regex(u8.Surr("(?:f|g)abc"))   //regexp + text
+  对 ops.Regex(u8.Surr("f|g")) & ops.Regex(u8.Surr("J|k")) == ops.Regex(u8.Surr("(?:f|g)(?:J|k)"))  //regexp + regexp
+
+ }
+ 形Println("Ops testing finito!")
+
+}
+
