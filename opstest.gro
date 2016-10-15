@@ -1,7 +1,7 @@
-用㗢"github.com/grolang/dyn/macro"
+用㗢"github.com/grolang/groo/macro"
 源"opstest.go"
-入(u8"github.com/grolang/dyn/utf88"
-     "github.com/grolang/dyn/ops")
+入(u8"github.com/grolang/groo/utf88"
+     "github.com/grolang/groo/ops")
 功正(){
 
  对真

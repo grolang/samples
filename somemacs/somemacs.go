@@ -11,7 +11,7 @@ import (
 
 type Struct struct{}
 
-func (m Struct) Init(p interface{}) {
+func (m Struct) Init(p macro.Parser) {
 }
 
 func (m Struct) Main(p macro.Parser) ast.Stmt {

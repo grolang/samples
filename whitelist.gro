@@ -1,0 +1,7 @@
+
+用㗢"github.com/grolang/gro/macro/whitelist"
+源"whitelist.go"
+func main() {
+	如真{形Println("abcdefg")}
+}
+

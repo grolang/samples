@@ -76,19 +76,19 @@
   //Go by Example: Switch
   { i:=2
     形Print("write ",i," as ")
-    择i{ //择 for `switch`
+    考i{ //考 for `switch`
       事1:形Println("one") //事 for `case`
       事2:形Println("two")
       事3:形Println("three")
     }
 
-    择时Now().Weekday(){ //时 for package `time`
+    考时Now().Weekday(){ //时 for package `time`
       事时Saturday,时Sunday:形Println("it's the weekend")
       别:形Println("it's a weekday") //别 for `default`
     }
 
     t:=时Now()
-    择{
+    考{
       事t.Hour()<12:形Println("it's before noon")
       别:形Println("it's after noon")
     }
