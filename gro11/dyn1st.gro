@@ -1,5 +1,5 @@
 用㗢"github.com/grolang/groo/macro"
-源"dyn1st.go"
+源"dyn1st"
 功正(){
 	形Println('a')
 	形Println("abc")

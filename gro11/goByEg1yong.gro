@@ -1,6 +1,6 @@
-用㕨"github.com/grolang/samples/moremacs"
+用㕨"github.com/grolang/samples/gro11/moremacs"
 包正 //包 is shorthand Kanji for `package`; 正 is short for `main`
-源"goByEg1.go"
+源"goByEg1yong"
 入"errors" //入 is short for `import`
 久s串="constant" //久 short for `const`
 

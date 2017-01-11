@@ -1,5 +1,5 @@
 包正
-源"goByEg2.go"
+源"goByEg2"
 入("math/rand";"sync";"sync/atomic";"runtime")
 
 //Go by Example: Goroutines

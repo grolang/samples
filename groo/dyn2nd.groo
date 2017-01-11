@@ -1,4 +1,4 @@
-源"dyn2nd.go"
+源"dyn2nd"
 功正(){
 	形Println('a')
 	形Println("abc")

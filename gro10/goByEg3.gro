@@ -1,5 +1,5 @@
 package正
-源"goByEg3.go"
+源"goByEg3"
 入("os";"strings";s"strings";"bytes";"regexp"
    "encoding/json";"math/rand";"strconv";"net/url"
    "crypto/sha1")
@@ -31,7 +31,7 @@ import"strings"
 
 //Go by Example: Panic
 {   //丢("a problem") //throws actual panic
-    让_,err:=os.Create("tmp/defer0.txt") //changed from /tmp/defer.txt //让 for assignments, etc
+    做_,err:=os.Create("tmp/defer0.txt") //changed from /tmp/defer.txt //做 for assignments, etc
     如err!=空{丢(err)}
 }
 

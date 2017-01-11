@@ -1,11 +1,11 @@
-// Copyright 2016 The Groo Authors. All rights reserved.
+// Copyright 2016 The Gro Authors. All rights reserved.
 // Use of this source code is governed by the same BSD-style
 // license as Go that can be found in the LICENSE file.
 
-package moremacs
+package somemacs
 
 import (
-	"go/ast"
+	"github.com/grolang/gro/ast"
 	"github.com/grolang/gro/macro"
 )
 
