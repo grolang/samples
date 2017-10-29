@@ -1,0 +1,2 @@
+"fmt".Println("'Hi' from try01.gro")
+"github.com/grolang/samples/goother".RunIt()

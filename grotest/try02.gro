@@ -1,0 +1,13 @@
+import grimint "github.com/grolang/samples/grotest/grim"(int)
+"fmt".Println("'Hi' from mycode.gro")
+do grimint.Yando(789, "github.com/grolang/samples/grotest/grub".Hooch)
+
+package grim (T)
+func Yando(x T, f func(T)){
+	"fmt".Printf("'Hi' from mycode.gro:grim(%T).Yando, saying: ", x)
+	f(x)
+}
+
+package grub
+func Hooch(x int){"fmt".Println("'Hi' from try02.gro:grub.Hooch")}
+

@@ -1,0 +1,26 @@
+import yourstruct "github.com/grolang/samples/grotest/threefor10" (float64, struct{a,b int})
+"fmt".Println("'Hi' from try10.gro")
+do yourstruct.RunIt()
+
+package threefor10 (S, T)
+import myess "github.com/grolang/samples/grotest/somedir/fourfor10" (S)
+func RunIt(){
+	var s S
+	var t T
+	"fmt".Printf("'Hi' from try10.gro:threefor10(%T, %T).RunIt\n", s, t)
+	myess.DoIt()
+}
+
+package "somedir" fourfor10 (T)
+import mycomplex128 "github.com/grolang/samples/grotest/somedir/fivefor10" (T)
+func DoIt(){
+	var t T
+	"fmt".Printf("'Hi' from try10.gro:somedir/myfour(%T).DoIt\n", t)
+	mycomplex128.DoIt()
+}
+
+package "somedir" fivefor10 (U)
+func DoIt(){
+	var u U
+	"fmt".Printf("'Hi' from try10.gro:somedir/fivefor10(%T).DoIt\n", u)
+}

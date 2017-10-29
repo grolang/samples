@@ -1,0 +1,17 @@
+import myfloat "github.com/grolang/samples/grotest/mytwofor05" (float64)
+import mystruct "github.com/grolang/samples/grotest/mytwofor05" (struct{a,b int})
+"fmt".Println("'Hi' from try05.gro")
+"github.com/grolang/samples/goother".RunIt()
+"github.com/grolang/samples/grotest/basicfor05".RunIt()
+do myfloat.RunIt()
+do mystruct.RunIt()
+
+package basicfor05
+func RunIt(){
+	"fmt".Println("'Hi' from try05.gro:basicfor05.RunIt")
+}
+package mytwofor05 (T)
+func RunIt(){
+	var t T
+	"fmt".Printf("'Hi' from try05.gro:mytwofor05(%T).RunIt\n", t)
+}

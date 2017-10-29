@@ -1,6 +1,0 @@
-包正
-源"cmds"
-功正(){
-  准"src/github.com/grolang/samples/goByEg1.gro"
-  跑"src/github.com/grolang/samples/goByEg1.go"
-}

@@ -1,0 +1,9 @@
+import myint "github.com/grolang/samples/grotest/myonefor04" (int)
+"fmt".Println("'Hi' from try04.gro")
+do myint.RunIt()
+
+package myonefor04 (T)
+func RunIt(){
+	var t T
+	"fmt".Printf("'Hi' from try04.gro:myonefor04(%T).RunIt", t)
+}

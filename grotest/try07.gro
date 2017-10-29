@@ -1,0 +1,8 @@
+import intpair "github.com/grolang/samples/grotest/pair" (int)
+do pr:= intpair.List{3,4}
+"fmt".Printf("Hello, %v", pr)
+
+package pair (T)
+type List struct{
+	I, J T
+}

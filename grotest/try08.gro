@@ -1,0 +1,17 @@
+import intapex "github.com/grolang/samples/grotest/apex" (int)
+import clubapex "github.com/grolang/samples/grotest/apex" ("github.com/grolang/samples/grotest/somepath/auxpkg".Club)
+do intapex.PrtVal(123)
+do clubapex.PrtNil()
+
+package apex (T)
+func PrtVal(x T){
+	"fmt".Printf("The passed-in type is %T\n", x)
+}
+func PrtNil(){
+	var x T
+	"fmt".Printf("The passed-in type is %T\n", x)
+}
+
+package "somepath" auxpkg
+type Club string
+

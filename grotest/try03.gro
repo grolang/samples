@@ -1,0 +1,7 @@
+"fmt".Println("'Hi' from try03.gro")
+"github.com/grolang/samples/grotest/basicfor03".RunIt()
+
+package basicfor03
+func RunIt(){
+	"fmt".Println("'Hi' from try03.gro:basicfor03.RunIt")
+}
