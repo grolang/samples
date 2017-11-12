@@ -1,0 +1,22 @@
+use dyn "dynamic"
+import ops "github.com/grolang/gro/ops"
+
+assert 1 + 3 == 4
+
+{
+	assert 3 + 4 == 7
+	assert 9 - 2 == 7
+
+	assert "string: abcdefg" == ops.Sprf("%T: %[1]s", "abcdefg")
+}
+
+dyn {
+	assert 4 + 5 == 9
+	assert (true && false) == false
+	assert -true == false
+
+	assert ops.Sprf("%T: %[1]d", 4 + 5) == "ops.Int: 9"
+	assert "utf88.Text: abcdefg" == ops.Sprf("%T: %[1]s", "abcdefg")
+	assert "utf88.Codepoint: 'a'" == ops.Sprf("%T: %[1]s", 'a')
+}
+
