@@ -3,6 +3,7 @@
 //line :8
 package main
 
+//line :8
 import (
 //line :9
 	listint "github.com/grolang/samples/container/generics/list_run_doodle/listint"
@@ -18,6 +19,7 @@ func init() {
 		e1 := l.PushFront(1)
 		l.InsertBefore(3, e4)
 		l.InsertAfter(2, e1)
+		// Iterate through list and print its contents.
 		for e := l.Front(); e != nil; e = e.Next() {
 			fmt.Println(e.Value)
 		}

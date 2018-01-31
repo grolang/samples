@@ -3,18 +3,19 @@ import "github.com/grolang/gro/ops"
 var v int; const c = 2; type t int
 
 {
-	let _ = int(4) // 4 is an untyped constant
+	assert "reflect".TypeOf(7) %"v" == "int" // 7 is an untyped constant
 
-	let _, isType = (+4).(groo.Int)
-	assert isType // +4 is 4 with the `groo.Identity` function applied
+	//apply ops.Identity to 7 using unary op...
+	assert "reflect".TypeOf(+7) %"v" == "int64" //same as ops.Int
+	assert "reflect".TypeOf(-7) %"v" == "int64"
 
-	var aa = 0x7000_0000_0000_0000
+	var a = 0x1_0000_0000
+	assert "reflect".TypeOf(+a) %"v" == "int64"
+	assert "reflect".TypeOf(a*a) %"v" == "ops.BigInt"
 
-	let _, isType = (+aa).(groo.Int)
-	assert isType //the `groo.Identity` unary function is applied
-
-	let _, isType = (aa+aa).(groo.BigInt)
-	assert isType //the `groo.Plus` binary function is applied
+	assert "reflect".TypeOf(7/9) %"v" == "ops.BigRat"
+	assert "reflect".TypeOf(1.1e250) %"v" == "float64" //ops.Float
+	assert 1.1e250 * 1.1e250 == inf //TODO: should become BigFloat
 }
 
 assert 1 + 3 == 4
@@ -119,13 +120,14 @@ assert (
 )
 
 //codepoints...
-assert "" + '\t'%"v" == "'\t'"
-assert "" + '\t'%"v" == `'	'`
-assert `'	'` == '\t'%"v"
+assert "" + '\t'%"v" == "\t"
+assert "" + '\t'%"v" == `	`
+assert `	` == '\t'%"v"
 
 //format strings...
 assert ops.Sprf("Hey, you!") == "Hey, you!"
 assert "Hello, " + "to"%"s " + "the"%"s " + "world"%"s!" == "Hello, to the world!"
+
 assert "there are " + 6 % "d green bottles" == "there are 6 green bottles"
 
 assert 123 % "5d has type %[1]T." == "  123 has type int64."
@@ -134,7 +136,7 @@ assert 123 % "5d has type %[1]T, and " + true % "t is true." ==
 
 //regexes...
 assert (
-	'a'%"v" == "'a'"
+	'a'%"v" == "a"
 	'ab'%"v" == "[ab]"
 	("a" >> "a|b")%"v" == "{{{ 0 1 a}}}"
 )
@@ -188,11 +190,18 @@ assert (
 )
 
 assert (
-	map[any]any{11:"Hey", 12:"Wow", 13:"Dude"} << [14:"Man"] ==
+	//short map syntax always remembers sequence of keys...
+	map{11:"Hey", 12:"Wow", 13:"Dude"} << [14:"Man"] ==
 		ops.InitMap([11:"Hey"], [12:"Wow"], [13:"Dude"], [14:"Man"])
 
-	map[any]any{11:"Hey", 12:"Wow", 13:"Dude"} << [14:"Man"] ==
-		map[any]any{11:"Hey", 12:"Wow", 13:"Dude", 14:"Man"}
+	map{11:"Hey", 12:"Wow", 13:"Dude"} << [14:"Man"] ==
+		map{11:"Hey", 12:"Wow", 13:"Dude", 14:"Man"}
+
+	map{11:"Hey", 12:"Wow", 13:"Dude"} << [14:"Man"] %"v" ==
+		"{11: Hey, 12: Wow, 13: Dude, 14: Man}"
+
+	map{11:"Hey", 12:"Wow", 13:"Dude"} + map{14:"Man", 12:"NewWow", 8:"OldMan"} ==
+		map{11:"Hey", 13:"Dude", 14:"Man", 12:"NewWow", 8:"OldMan"}
 )
 
 //unary reflect-operator
@@ -222,8 +231,8 @@ assert(
 
 {
 	do a:= "Hey there!"
-	assert a[4] %"v" == "'t'" //TODO: fix codepoint formatting
-	assert a[4] % "v %[1]T" == "'t' utf88.Codepoint"
+	assert a[4] %"v" == "t"
+	assert a[4] % "v %[1]T" == "t utf88.Codepoint"
 	assert a[4:7] % "v" == "the"
 }
 
@@ -253,19 +262,17 @@ assert(
 	assert "bcd" >> letterA == nil
 }
 
+//------------------------------ recursive parsecs ------------------------------
 {
 	let letterA = func{func{'a'}}
-
-	assert "abc" >> letterA == 'a' //#### FAIL: call >> on a func returning a func returning a codepoint
-		//ToParser: invalid input type: func(...interface {}) interface {}
-
+	assert "abc" >> letterA == 'a' //call >> on a func returning a func returning a codepoint
 	assert "defg" >> letterA == nil
 }
 
 {
 	var expr func(...any)any
-	do paren := func{"(" &> func{expr} <& ')'} //#### call &> or <& on a func returning a func returning a Parser
-	do expr = func{'a' | paren()} //#### call | on a Parser
+	do paren := func{"(" &> func{expr} <& ')'} //call &> or <& on a func returning a func returning a Parser
+	do expr = func{'a' | paren()} //call | on a Parser
 	assert(
 		"a" >> expr() == 'a'
 		"(a)" >> expr() == 'a'
@@ -273,72 +280,80 @@ assert(
 	)
 }
 
-/*{
+{
+	var expr func(...any)any
+	do paren := func{"(" &> expr <& ')'} //call &> or <& on a func returning a Parser
+	do expr = func{'a' | paren()} //call | on a Parser
+	assert(
+		"a" >> expr() == 'a'
+		"(a)" >> expr() == 'a'
+		"((a))" >> expr() == 'a'
+	)
+}
+
+{
 	var expr func(...any)any
 	do paren := func{"(" &> func{expr} <& ')'}
-	do expr = func{'a' | paren} //#### FAIL: call | on func returning a Parser
-		//Alt: invalid input type
+	do expr = func{'a' | paren} //call | on func returning a Parser
 	assert(
 		"a" >> expr() == 'a'
 		"(a)" >> expr() == 'a'
 		"((a))" >> expr() == 'a'
 	)
-}*/
+}
 
 {
 	var expr func(...any)any
 	do expr = func{'a' | ("(" &> func{expr} <& ')')}
 	assert(
-		"a" >> expr() == 'a' //#### call >> on a Parser
+		"a" >> expr() == 'a' //call >> on a Parser
 		"(a)" >> expr() == 'a'
 		"((a))" >> expr() == 'a'
 	)
 }
 
-/*{
+{
 	var expr func(...any)any
-	do expr = func{'a' | ("(" &> expr <& ')')} //#### FAIL: infinite loop or recursion
+	do expr = func{'a' | ("(" &> expr <& ')')} //call &> or <& on a func returning a Parser
 	assert(
 		"a" >> expr() == 'a'
 		"(a)" >> expr() == 'a'
 		"((a))" >> expr() == 'a'
 	)
-}*/
+}
 
 {
 	var expr func(...any)any
 	do expr = func{'a' | ("(" &> func{expr} <& ')')}
 	assert(
-		"a" >> expr == 'a' //#### call >> on a func returning a Parser
+		"a" >> expr == 'a' //call >> on a func returning a Parser
 	)
 }
 
 {
 	var expr func(...any)any
-	do expr = func{'a' | [2:2]*("(" &> func{expr} <& ')')} //#### call * on a Parser
+	do expr = func{'a' | [2:2]*("(" &> func{expr} <& ')')} //call * on a Parser
 	assert(
-		"aa" >> expr() == 'a' //#### call >> on a Parser
-		"(a)(a)" >> expr() % "v" == "{'a', 'a'}"
-		"((a)(a))((a)(a))" >> expr() % "v" == "{{'a', 'a'}, {'a', 'a'}}"
+		"aa" >> expr() == 'a' //call >> on a Parser
+		"(a)(a)" >> expr() % "v" == "{a, a}"
+		"((a)(a))((a)(a))" >> expr() % "v" == "{{a, a}, {a, a}}"
 	)
 }
 
-/*{
+{
 	var expr func(...any)any
-	do expr = func{'a' | [2:2]*func{"(" &> func{expr} <& ')'}} //#### FAIL: call * on func returning Parser
-		//interface conversion: interface {} is parsec.Parser, not func(...interface {}) interface {}
-		//Mult cases multiusePair and func(...interface{})interface{}
+	do expr = func{'a' | [2:2]*func{"(" &> func{expr} <& ')'}} //call * on func returning Parser
 	assert(
 		"aa" >> expr() == 'a'
 	)
-}*/
+}
 
-/*{
-	let manyA= [3:3]*func{'a'} //#### FAIL: call * on func returning codepoint
-		//interface conversion: interface {} is utf88.Codepoint, not func(...interface {}) interface {}
-		//Mult cases multiusePair and func(...interface{})interface{}
-	do ops.Pr("aaab">>manyA)
-}*/
+{
+	let manyA= [3:3]*func{'a'} //call * on func returning codepoint
+	assert(
+		"aaab" >> manyA %"v" == "{a, a, a}"
+	)
+}
 
-
+//------------------------------ end of recursive parsecs ------------------------------
 

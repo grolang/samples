@@ -3,6 +3,7 @@
 package main
 
 import (
+	reflect "reflect"
 	groo "github.com/grolang/gro/ops"
 	assert "github.com/grolang/gro/assert"
 	time "time"
@@ -18,22 +19,15 @@ type t int
 
 func init() {
 	{
-		{
-			_ = int(4) // 4 is an untyped constant
-			{
-				_, isType := (groo.Identity(4)).(groo.Int)
-				assert.AssertTrue(isType)
-				var aa = 0x7000000000000000
-				{
-					_, isType := (groo.Identity(aa)).(groo.Int)
-					assert.AssertTrue(isType)
-					{
-						_, isType := (groo.Plus(aa, aa)).(groo.BigInt)
-						assert.AssertTrue(isType)
-					}
-				}
-			}
-		}
+		assert.AssertTrue(groo.IsEqual(groo.Mod(reflect.TypeOf(7), groo.MakeText("v")), groo.MakeText("int")))
+		assert.AssertTrue(groo.IsEqual(groo.Mod(reflect.TypeOf(groo.Identity(7)), groo.MakeText("v")), groo.MakeText("int64")))
+		assert.AssertTrue(groo.IsEqual(groo.Mod(reflect.TypeOf(groo.Negate(7)), groo.MakeText("v")), groo.MakeText("int64")))
+		var a = 0x100000000
+		assert.AssertTrue(groo.IsEqual(groo.Mod(reflect.TypeOf(groo.Identity(a)), groo.MakeText("v")), groo.MakeText("int64")))
+		assert.AssertTrue(groo.IsEqual(groo.Mod(reflect.TypeOf(groo.Mult(a, a)), groo.MakeText("v")), groo.MakeText("ops.BigInt")))
+		assert.AssertTrue(groo.IsEqual(groo.Mod(reflect.TypeOf(groo.Divide(7, 9)), groo.MakeText("v")), groo.MakeText("ops.BigRat")))
+		assert.AssertTrue(groo.IsEqual(groo.Mod(reflect.TypeOf(1.1e250), groo.MakeText("v")), groo.MakeText("float64")))
+		assert.AssertTrue(groo.IsEqual(groo.Mult(1.1e250, 1.1e250), inf))
 	}
 	assert.AssertTrue(groo.IsEqual(groo.Plus(1, 3), 4))
 	assert.AssertTrue(groo.IsEqual(groo.Plus(3, 4), 7))
@@ -116,45 +110,45 @@ func init() {
 		assert.AssertTrue(groo.IsGreaterThan(time.Date(2017, 12, 12, 0, 0, 0, 0, time.UTC), time.Date(2003, 8, 29, 0, 0, 0, 0, time.UTC)))
 	}()
 	func() {
-		assert.AssertTrue(groo.IsEqual(groo.NewMapEntryOrPosIntRange(0, 5), groo.NewMapEntryOrPosIntRange(0, 5)))
-		assert.AssertTrue(groo.IsNotEqual(groo.NewMapEntryOrPosIntRange(0, 5), groo.NewMapEntryOrPosIntRange(2, 13)))
-		assert.AssertTrue(groo.IsNotEqual(groo.NewMapEntryOrPosIntRange(0, 5), groo.NewMapEntryOrPosIntRange(0, 13)))
-		assert.AssertTrue(groo.IsNotEqual(groo.NewMapEntryOrPosIntRange(0, 5), groo.NewMapEntryOrPosIntRange(2, 5)))
-		assert.AssertTrue(groo.IsEqual(groo.NewMapEntryOrPosIntRange(0, 20), groo.NewMapEntryOrPosIntRange(0, 20)))
-		assert.AssertTrue(groo.IsEqual(groo.NewMapEntryOrPosIntRange(12, groo.Inf), groo.NewMapEntryOrPosIntRange(12, inf)))
-		assert.AssertTrue(groo.IsEqual(groo.NewMapEntryOrPosIntRange(0, groo.Inf), groo.NewMapEntryOrPosIntRange(0, inf)))
+		assert.AssertTrue(groo.IsEqual(groo.NewPair(0, 5), groo.NewPair(0, 5)))
+		assert.AssertTrue(groo.IsNotEqual(groo.NewPair(0, 5), groo.NewPair(2, 13)))
+		assert.AssertTrue(groo.IsNotEqual(groo.NewPair(0, 5), groo.NewPair(0, 13)))
+		assert.AssertTrue(groo.IsNotEqual(groo.NewPair(0, 5), groo.NewPair(2, 5)))
+		assert.AssertTrue(groo.IsEqual(groo.NewPair(0, 20), groo.NewPair(0, 20)))
+		assert.AssertTrue(groo.IsEqual(groo.NewPair(12, groo.Inf), groo.NewPair(12, inf)))
+		assert.AssertTrue(groo.IsEqual(groo.NewPair(0, groo.Inf), groo.NewPair(0, inf)))
 	}()
-	assert.AssertTrue(groo.IsEqual(groo.Plus(groo.MakeText(""), groo.Mod(groo.Runex("\\t"), groo.MakeText("v"))), groo.MakeText("'\t'")))
-	assert.AssertTrue(groo.IsEqual(groo.Plus(groo.MakeText(""), groo.Mod(groo.Runex("\\t"), groo.MakeText("v"))), groo.MakeText(`'	'`)))
-	assert.AssertTrue(groo.IsEqual(groo.MakeText(`'	'`), groo.Mod(groo.Runex("\\t"), groo.MakeText("v"))))
+	assert.AssertTrue(groo.IsEqual(groo.Plus(groo.MakeText(""), groo.Mod(groo.Runex("\\t"), groo.MakeText("v"))), groo.MakeText("\t")))
+	assert.AssertTrue(groo.IsEqual(groo.Plus(groo.MakeText(""), groo.Mod(groo.Runex("\\t"), groo.MakeText("v"))), groo.MakeText(`	`)))
+	assert.AssertTrue(groo.IsEqual(groo.MakeText(`	`), groo.Mod(groo.Runex("\\t"), groo.MakeText("v"))))
 	assert.AssertTrue(groo.IsEqual(ops.Sprf(groo.MakeText("Hey, you!")), groo.MakeText("Hey, you!")))
 	assert.AssertTrue(groo.IsEqual(groo.Plus(groo.Plus(groo.Plus(groo.MakeText("Hello, "), groo.Mod(groo.MakeText("to"), groo.MakeText("s "))), groo.Mod(groo.MakeText("the"), groo.MakeText("s "))), groo.Mod(groo.MakeText("world"), groo.MakeText("s!"))), groo.MakeText("Hello, to the world!")))
 	assert.AssertTrue(groo.IsEqual(groo.Plus(groo.MakeText("there are "), groo.Mod(6, groo.MakeText("d green bottles"))), groo.MakeText("there are 6 green bottles")))
 	assert.AssertTrue(groo.IsEqual(groo.Mod(123, groo.MakeText("5d has type %[1]T.")), groo.MakeText("  123 has type int64.")))
 	assert.AssertTrue(groo.IsEqual(groo.Plus(groo.Mod(123, groo.MakeText("5d has type %[1]T, and ")), groo.Mod(true, groo.MakeText("t is true."))), groo.MakeText("  123 has type int64, and true is true.")))
 	func() {
-		assert.AssertTrue(groo.IsEqual(groo.Mod(groo.Runex("a"), groo.MakeText("v")), groo.MakeText("'a'")))
+		assert.AssertTrue(groo.IsEqual(groo.Mod(groo.Runex("a"), groo.MakeText("v")), groo.MakeText("a")))
 		assert.AssertTrue(groo.IsEqual(groo.Mod(groo.Runex("ab"), groo.MakeText("v")), groo.MakeText("[ab]")))
 		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.RightShift(groo.MakeText("a"), groo.MakeText("a|b"))), groo.MakeText("v")), groo.MakeText("{{{ 0 1 a}}}")))
 	}()
 	func() {
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewMapEntryOrPosIntRange(0, groo.Inf), groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a*`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.Runex("a"), groo.NewMapEntryOrPosIntRange(0, groo.Inf))), groo.MakeText("v")), groo.MakeText(`a*?`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewMapEntryOrPosIntRange(0, groo.Inf), groo.MakeText("a"))), groo.MakeText("v")), groo.MakeText(`(?:\Qa\E)*`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.MakeText("a"), groo.NewMapEntryOrPosIntRange(0, groo.Inf))), groo.MakeText("v")), groo.MakeText(`(?:\Qa\E)*?`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewMapEntryOrPosIntRange(0, groo.Inf), groo.Runex("a-z"))), groo.MakeText("v")), groo.MakeText(`[a-z]*`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewMapEntryOrPosIntRange(0, groo.Inf), groo.MakeText("abc"))), groo.MakeText("v")), groo.MakeText(`(?:\Qabc\E)*`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewMapEntryOrPosIntRange(0, groo.Inf), (groo.Alt(groo.Runex("a"), groo.Runex("b"))))), groo.MakeText("v")), groo.MakeText(`[ab]*`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewMapEntryOrPosIntRange(0, groo.Inf), (groo.Alt(groo.Runex("a"), groo.MakeText("bc"))))), groo.MakeText("v")), groo.MakeText(`(?:a|(?:\Qbc\E))*`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewPair(0, groo.Inf), groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a*`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.Runex("a"), groo.NewPair(0, groo.Inf))), groo.MakeText("v")), groo.MakeText(`a*?`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewPair(0, groo.Inf), groo.MakeText("a"))), groo.MakeText("v")), groo.MakeText(`(?:\Qa\E)*`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.MakeText("a"), groo.NewPair(0, groo.Inf))), groo.MakeText("v")), groo.MakeText(`(?:\Qa\E)*?`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewPair(0, groo.Inf), groo.Runex("a-z"))), groo.MakeText("v")), groo.MakeText(`[a-z]*`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewPair(0, groo.Inf), groo.MakeText("abc"))), groo.MakeText("v")), groo.MakeText(`(?:\Qabc\E)*`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewPair(0, groo.Inf), (groo.Alt(groo.Runex("a"), groo.Runex("b"))))), groo.MakeText("v")), groo.MakeText(`[ab]*`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewPair(0, groo.Inf), (groo.Alt(groo.Runex("a"), groo.MakeText("bc"))))), groo.MakeText("v")), groo.MakeText(`(?:a|(?:\Qbc\E))*`)))
 	}()
 	func() {
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewMapEntryOrPosIntRange(1, groo.Inf), groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a+`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.Runex("a"), groo.NewMapEntryOrPosIntRange(1, groo.Inf))), groo.MakeText("v")), groo.MakeText(`a+?`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewMapEntryOrPosIntRange(0, 1), groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a?`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewPair(1, groo.Inf), groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a+`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.Runex("a"), groo.NewPair(1, groo.Inf))), groo.MakeText("v")), groo.MakeText(`a+?`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewPair(0, 1), groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a?`)))
 		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(3, groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a{3}`)))
 		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.Runex("a"), 3)), groo.MakeText("v")), groo.MakeText(`a{3}?`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewMapEntryOrPosIntRange(3, 5), groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a{3,5}`)))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewMapEntryOrPosIntRange(3, groo.Inf), groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a{3,}`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewPair(3, 5), groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a{3,5}`)))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.Mult(groo.NewPair(3, groo.Inf), groo.Runex("a"))), groo.MakeText("v")), groo.MakeText(`a{3,}`)))
 		assert.AssertTrue(groo.IsEqual(groo.Mod(groo.Not(groo.Runex("a")), groo.MakeText("v")), groo.MakeText(`[^a]`)))
 		assert.AssertTrue(groo.IsEqual(groo.Mod(groo.Not(groo.Runex("2a-c")), groo.MakeText("v")), groo.MakeText(`[^2a-c]`)))
 		assert.AssertTrue(groo.IsEqual(groo.Mod(groo.Not(groo.Runex("^2a-c")), groo.MakeText("v")), groo.MakeText(`[2a-c]`)))
@@ -179,21 +173,10 @@ func init() {
 		assert.AssertTrue(groo.IsEqual(groo.Mod((groo.LeftShift([]int{1, 2, 3}, []any{groo.MakeText("4"), groo.MakeText("5")})), groo.MakeText("v")), groo.MakeText(`{1, 2, 3, {4, 5}}`)))
 	}()
 	func() {
-		assert.AssertTrue(groo.IsEqual(groo.LeftShift(map[any]any{
-			11: groo.MakeText("Hey"),
-			12: groo.MakeText("Wow"),
-			13: groo.MakeText("Dude"),
-		}, groo.NewMapEntryOrPosIntRange(14, groo.MakeText("Man"))), ops.InitMap(groo.NewMapEntryOrPosIntRange(11, groo.MakeText("Hey")), groo.NewMapEntryOrPosIntRange(12, groo.MakeText("Wow")), groo.NewMapEntryOrPosIntRange(13, groo.MakeText("Dude")), groo.NewMapEntryOrPosIntRange(14, groo.MakeText("Man")))))
-		assert.AssertTrue(groo.IsEqual(groo.LeftShift(map[any]any{
-			11: groo.MakeText("Hey"),
-			12: groo.MakeText("Wow"),
-			13: groo.MakeText("Dude"),
-		}, groo.NewMapEntryOrPosIntRange(14, groo.MakeText("Man"))), map[any]any{
-			11: groo.MakeText("Hey"),
-			12: groo.MakeText("Wow"),
-			13: groo.MakeText("Dude"),
-			14: groo.MakeText("Man"),
-		}))
+		assert.AssertTrue(groo.IsEqual(groo.LeftShift(groo.InitMap(groo.NewPair(11, groo.MakeText("Hey")), groo.NewPair(12, groo.MakeText("Wow")), groo.NewPair(13, groo.MakeText("Dude"))), groo.NewPair(14, groo.MakeText("Man"))), ops.InitMap(groo.NewPair(11, groo.MakeText("Hey")), groo.NewPair(12, groo.MakeText("Wow")), groo.NewPair(13, groo.MakeText("Dude")), groo.NewPair(14, groo.MakeText("Man")))))
+		assert.AssertTrue(groo.IsEqual(groo.LeftShift(groo.InitMap(groo.NewPair(11, groo.MakeText("Hey")), groo.NewPair(12, groo.MakeText("Wow")), groo.NewPair(13, groo.MakeText("Dude"))), groo.NewPair(14, groo.MakeText("Man"))), groo.InitMap(groo.NewPair(11, groo.MakeText("Hey")), groo.NewPair(12, groo.MakeText("Wow")), groo.NewPair(13, groo.MakeText("Dude")), groo.NewPair(14, groo.MakeText("Man")))))
+		assert.AssertTrue(groo.IsEqual(groo.Mod(groo.LeftShift(groo.InitMap(groo.NewPair(11, groo.MakeText("Hey")), groo.NewPair(12, groo.MakeText("Wow")), groo.NewPair(13, groo.MakeText("Dude"))), groo.NewPair(14, groo.MakeText("Man"))), groo.MakeText("v")), groo.MakeText("{11: Hey, 12: Wow, 13: Dude, 14: Man}")))
+		assert.AssertTrue(groo.IsEqual(groo.Plus(groo.InitMap(groo.NewPair(11, groo.MakeText("Hey")), groo.NewPair(12, groo.MakeText("Wow")), groo.NewPair(13, groo.MakeText("Dude"))), groo.InitMap(groo.NewPair(14, groo.MakeText("Man")), groo.NewPair(12, groo.MakeText("NewWow")), groo.NewPair(8, groo.MakeText("OldMan")))), groo.InitMap(groo.NewPair(11, groo.MakeText("Hey")), groo.NewPair(13, groo.MakeText("Dude")), groo.NewPair(14, groo.MakeText("Man")), groo.NewPair(12, groo.MakeText("NewWow")), groo.NewPair(8, groo.MakeText("OldMan")))))
 	}()
 	func() {
 		assert.AssertTrue(groo.IsEqual(groo.Mod(7, groo.MakeText("v %[1]T")), groo.MakeText("7 int64")))
@@ -217,8 +200,8 @@ func init() {
 	}
 	{
 		a := groo.MakeText("Hey there!")
-		assert.AssertTrue(groo.IsEqual(groo.Mod((*groo.GetIndex(&a, 4)), groo.MakeText("v")), groo.MakeText("'t'")))
-		assert.AssertTrue(groo.IsEqual(groo.Mod((*groo.GetIndex(&a, 4)), groo.MakeText("v %[1]T")), groo.MakeText("'t' utf88.Codepoint")))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((*groo.GetIndex(&a, 4)), groo.MakeText("v")), groo.MakeText("t")))
+		assert.AssertTrue(groo.IsEqual(groo.Mod((*groo.GetIndex(&a, 4)), groo.MakeText("v %[1]T")), groo.MakeText("t utf88.Codepoint")))
 		assert.AssertTrue(groo.IsEqual(groo.Mod((*groo.GetIndex(&a, 4, 7)), groo.MakeText("v")), groo.MakeText("the")))
 	}
 	{
@@ -265,13 +248,43 @@ func init() {
 	{
 		var expr func(...any) any
 		paren := func(groo_it ...interface{}) interface{} {
-			return groo.LeftAnd(groo.RightAnd(groo.MakeText("("), func(groo_it ...interface{}) interface{} {
+			return groo.LeftSeq(groo.RightSeq(groo.MakeText("("), func(groo_it ...interface{}) interface{} {
 				return expr
 			}), groo.Runex(")"))
-		} //#### call &> or <& on a func returning a func returning a Parser
+		} //call &> or <& on a func returning a func returning a Parser
 		expr = func(groo_it ...interface{}) interface{} {
 			return groo.Alt(groo.Runex("a"), paren())
-		} //#### call | on a Parser
+		} //call | on a Parser
+		func() {
+			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("a"), expr()), groo.Runex("a")))
+			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("(a)"), expr()), groo.Runex("a")))
+			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("((a))"), expr()), groo.Runex("a")))
+		}()
+	}
+	{
+		var expr func(...any) any
+		paren := func(groo_it ...interface{}) interface{} {
+			return groo.LeftSeq(groo.RightSeq(groo.MakeText("("), expr), groo.Runex(")"))
+		} //call &> or <& on a func returning a Parser
+		expr = func(groo_it ...interface{}) interface{} {
+			return groo.Alt(groo.Runex("a"), paren())
+		} //call | on a Parser
+		func() {
+			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("a"), expr()), groo.Runex("a")))
+			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("(a)"), expr()), groo.Runex("a")))
+			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("((a))"), expr()), groo.Runex("a")))
+		}()
+	}
+	{
+		var expr func(...any) any
+		paren := func(groo_it ...interface{}) interface{} {
+			return groo.LeftSeq(groo.RightSeq(groo.MakeText("("), func(groo_it ...interface{}) interface{} {
+				return expr
+			}), groo.Runex(")"))
+		}
+		expr = func(groo_it ...interface{}) interface{} {
+			return groo.Alt(groo.Runex("a"), paren)
+		} //call | on func returning a Parser
 		func() {
 			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("a"), expr()), groo.Runex("a")))
 			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("(a)"), expr()), groo.Runex("a")))
@@ -281,7 +294,7 @@ func init() {
 	{
 		var expr func(...any) any
 		expr = func(groo_it ...interface{}) interface{} {
-			return groo.Alt(groo.Runex("a"), (groo.LeftAnd(groo.RightAnd(groo.MakeText("("), func(groo_it ...interface{}) interface{} {
+			return groo.Alt(groo.Runex("a"), (groo.LeftSeq(groo.RightSeq(groo.MakeText("("), func(groo_it ...interface{}) interface{} {
 				return expr
 			}), groo.Runex(")"))))
 		}
@@ -294,7 +307,18 @@ func init() {
 	{
 		var expr func(...any) any
 		expr = func(groo_it ...interface{}) interface{} {
-			return groo.Alt(groo.Runex("a"), (groo.LeftAnd(groo.RightAnd(groo.MakeText("("), func(groo_it ...interface{}) interface{} {
+			return groo.Alt(groo.Runex("a"), (groo.LeftSeq(groo.RightSeq(groo.MakeText("("), expr), groo.Runex(")"))))
+		} //call &> or <& on a func returning a Parser
+		func() {
+			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("a"), expr()), groo.Runex("a")))
+			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("(a)"), expr()), groo.Runex("a")))
+			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("((a))"), expr()), groo.Runex("a")))
+		}()
+	}
+	{
+		var expr func(...any) any
+		expr = func(groo_it ...interface{}) interface{} {
+			return groo.Alt(groo.Runex("a"), (groo.LeftSeq(groo.RightSeq(groo.MakeText("("), func(groo_it ...interface{}) interface{} {
 				return expr
 			}), groo.Runex(")"))))
 		}
@@ -305,15 +329,38 @@ func init() {
 	{
 		var expr func(...any) any
 		expr = func(groo_it ...interface{}) interface{} {
-			return groo.Alt(groo.Runex("a"), groo.Mult(groo.NewMapEntryOrPosIntRange(2, 2), (groo.LeftAnd(groo.RightAnd(groo.MakeText("("), func(groo_it ...interface{}) interface{} {
+			return groo.Alt(groo.Runex("a"), groo.Mult(groo.NewPair(2, 2), (groo.LeftSeq(groo.RightSeq(groo.MakeText("("), func(groo_it ...interface{}) interface{} {
 				return expr
 			}), groo.Runex(")")))))
-		} //#### call * on a Parser
+		} //call * on a Parser
 		func() {
 			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("aa"), expr()), groo.Runex("a")))
-			assert.AssertTrue(groo.IsEqual(groo.Mod(groo.RightShift(groo.MakeText("(a)(a)"), expr()), groo.MakeText("v")), groo.MakeText("{'a', 'a'}")))
-			assert.AssertTrue(groo.IsEqual(groo.Mod(groo.RightShift(groo.MakeText("((a)(a))((a)(a))"), expr()), groo.MakeText("v")), groo.MakeText("{{'a', 'a'}, {'a', 'a'}}")))
+			assert.AssertTrue(groo.IsEqual(groo.Mod(groo.RightShift(groo.MakeText("(a)(a)"), expr()), groo.MakeText("v")), groo.MakeText("{a, a}")))
+			assert.AssertTrue(groo.IsEqual(groo.Mod(groo.RightShift(groo.MakeText("((a)(a))((a)(a))"), expr()), groo.MakeText("v")), groo.MakeText("{{a, a}, {a, a}}")))
 		}()
+	}
+	{
+		var expr func(...any) any
+		expr = func(groo_it ...interface{}) interface{} {
+			return groo.Alt(groo.Runex("a"), groo.Mult(groo.NewPair(2, 2), func(groo_it ...interface{}) interface{} {
+				return groo.LeftSeq(groo.RightSeq(groo.MakeText("("), func(groo_it ...interface{}) interface{} {
+					return expr
+				}), groo.Runex(")"))
+			}))
+		} //call * on func returning Parser
+		func() {
+			assert.AssertTrue(groo.IsEqual(groo.RightShift(groo.MakeText("aa"), expr()), groo.Runex("a")))
+		}()
+	}
+	{
+		{
+			manyA := groo.Mult(groo.NewPair(3, 3), func(groo_it ...interface{}) interface{} {
+				return groo.Runex("a")
+			}) //call * on func returning codepoint
+			func() {
+				assert.AssertTrue(groo.IsEqual(groo.Mod(groo.RightShift(groo.MakeText("aaab"), manyA), groo.MakeText("v")), groo.MakeText("{a, a, a}")))
+			}()
+		}
 	}
 }
 
